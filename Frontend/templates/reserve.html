@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant Map</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    #room {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%; /* Adjust the width of the room */
+        height: 60vh; /* Adjust the height of the room */
+        margin: 0 auto; /* Center the room horizontally */
+        background-color: #f2f2f2;
+        padding: 20px; /* Add some padding */
+        border: 2px solid #333; /* Add border to the room */
+        border-radius: 10px; /* Round the corners of the room */
+        position: relative; /* Enable absolute positioning of tables */
+    }
+    .table {
+        position: absolute;
+        cursor: pointer;
+        border: 2px solid #333;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ccc;
+    }
+    .table-name {
+        color: #333;
+        font-size: 12px;
+        text-align: center;
+    }
+    #popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+    #popup-content {
+        background-color: #fff;
+        padding: 20px;
+        width: 300px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 10px;
+    }
+</style>
+</head>
+<body>
+
+    <a href="/reservations"><button type="button">View Reservations</button></a>
+    <a href="/"><button type="button">Go to Homepage</button></a>
+<h1>Restaurant Map</h1>
+
+
+
+<div id="room">
+    <!-- Table 1 -->
+    <div class="table" id="table1" style="left: 20%; top: 20%; width: 16%; height: 12%;" onclick="showPopup('Table 1', '1')">
+        <span class="table-name">Table 1</span>
+    </div>
+    <!-- Table 2 -->
+    <div class="table" id="table2" style="left: 40%; top: 20%; width: 16%; height: 12%;" onclick="showPopup('Table 2', '2')">
+        <span class="table-name">Table 2</span>
+    </div>
+    <!-- Table 3 -->
+    <div class="table" id="table3" style="left: 60%; top: 20%; width: 16%; height: 12%;" onclick="showPopup('Table 3', '3')">
+        <span class="table-name">Table 3</span>
+    </div>
+    <!-- Table 4 -->
+    <div class="table" id="table4" style="left: 20%; top: 50%; width: 16%; height: 12%;" onclick="showPopup('Table 4', '4')">
+        <span class="table-name">Table 4</span>
+    </div>
+    <!-- Table 5 -->
+    <div class="table" id="table5" style="left: 40%; top: 50%; width: 16%; height: 12%;" onclick="showPopup('Table 5', '5')">
+        <span class="table-name">Table 5</span>
+    </div>
+</div>
+
+<!-- Popup dialog -->
+<div id="popup">
+    <div id="popup-content">
+        <h2 id="table-title"></h2>
+        <form id="reservation-form" action="/reserve" method="POST" onsubmit="return validateReservation()">
+            <label for="name">Your Name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+            <label for="date">Reservation Date:</label><br>
+            <input type="date" id="date" name="date" required><br>
+            <label for="start-time">Reservation Start Time:</label><br>
+            <input type="time" id="start-time" name="start-time" required><br>
+            <label for="end-time">Reservation End Time:</label><br>
+            <input type="time" id="end-time" name="end-time" required><br><br>
+            <input type="hidden" id="table-id" name="table-id" value=""><!-- Hidden input field to store table ID -->
+            <button type="button" onclick="submitForm()">Reserve</button>
+        </form>
+        <button onclick="closePopup()">Close</button>
+    </div>
+</div>
+
+<script>
+    // Function to show popup dialog
+    function showPopup(tableId, tableRef) {
+        var popup = document.getElementById('popup');
+        var popupContent = document.getElementById('popup-content');
+        document.getElementById('table-title').innerText = tableId;
+        document.getElementById('table-id').value = tableRef; // Set the value of hidden input field
+        popup.style.display = "block";
+    }
+
+    // Function to close popup dialog
+    function closePopup() {
+        var popup = document.getElementById('popup');
+        popup.style.display = "none";
+    }
+
+    // Function to validate reservation
+    function validateReservation() {
+        var startDate = new Date(document.getElementById('date').value + ' ' + document.getElementById('start-time').value);
+        var endDate = new Date(document.getElementById('date').value + ' ' + document.getElementById('end-time').value);
+        var now = new Date();
+
+        if (startDate <= now) {
+            alert("Reservation start time must be after the current time.");
+            return false;
+        }
+
+        if (endDate <= startDate) {
+            alert("Reservation end time must be after the start time.");
+            return false;
+        }
+
+        if ((endDate - startDate) < 900000) {
+            alert("Reservation duration must be at least 15 minutes.");
+            return false;
+        }
+
+        return true;
+    }
+
+    // Function to submit the form via POST
+    function submitForm() {
+        if (validateReservation()) {
+            document.getElementById("reservation-form").submit();
+        }
+    }
+</script>
+
+</body>
+</html>

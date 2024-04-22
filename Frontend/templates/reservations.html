@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservations</title>
+</head>
+<body>
+    
+    
+    <h1>Reservations</h1>
+    
+    {% if message %}
+    <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
+    <a href="/reserve"><button type="button">Reserve Table</button></a>
+    <a href="/"><button type="button">Go to Homepage</button></a>
+    {% if reservations %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Table ID</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.date }}</td>
+                <td>{{ reservation.name }}</td>
+                <td>{{ reservation.table_id }}</td>
+                <td>{{ reservation.start_time }}</td>
+                <td>{{ reservation.end_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No reservations found.</p>
+    {% endif %}
+</body>
+</html>
