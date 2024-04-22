@@ -1,0 +1,26 @@
+After you pull the image from github, you should first change your working directory to
+./Backend folder, after that run:
+
+    docker build -t flaskappback .
+
+inside your terminal.
+
+after it succesfully creates the image, navigate to the ./Frontend folder in this directory and run:
+
+    docker build -t flaskappfront .
+
+to create the other image. after it is also succesfull, you can go back to the root directory of this folder that contains docker-compose.yaml file.
+
+
+After making sure everything in you docker-compose.yaml file seems good, and you changed the ports etc. to your liking.
+
+run:
+
+    docker-compose up -d
+
+in your terminal.
+
+After every container is started, you can use the Restournat reservation demo on your web browser by going to:
+
+    http://localhost:8000
+
