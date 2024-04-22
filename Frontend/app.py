@@ -1,9 +1,10 @@
 from flask import Flask, request, render_template
 import requests
+import os
 
 app = Flask(__name__)
 
-BACKEND_API_URL = "http://localhost:8000/api"
+BACKEND_API_URL = os.environ.get("BACKEND_API_URL", "http://localhost:5000")
 
 @app.route('/')
 def home():
@@ -65,4 +66,4 @@ def reserve_page():
         return render_template('reserve.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, port=8000)

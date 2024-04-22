@@ -3,7 +3,7 @@ FROM python:3.9-slim
 
 # Set environment variables
 ENV POSTGRES_HOST=localhost
-ENV POSTGRES_PORT=9000
+ENV POSTGRES_PORT=6000
 ENV POSTGRES_DB=postgres
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=postgres
@@ -18,7 +18,7 @@ COPY . /backend
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Make port 5000 available to the world outside this container
-EXPOSE 8000
+EXPOSE 5000
 
 # Run app.py when the container launches
-CMD ["python", "backapp.py"]
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]

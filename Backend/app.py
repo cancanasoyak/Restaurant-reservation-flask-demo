@@ -4,10 +4,27 @@ from datetime import datetime, timedelta
 import os
 
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "9000")
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "6000")
 POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
 POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
+
+
+def create_table(conn):
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS reservations (
+            reservation_id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            table_id INT NOT NULL,
+            date DATE NOT NULL,
+            start_time TIME NOT NULL,
+            end_time TIME NOT NULL
+        )
+    """)
+    conn.commit()
+    cur.close()
+    return
 
 
 app = Flask(__name__)
@@ -19,6 +36,7 @@ conn = psycopg2.connect(
     user=POSTGRES_USER,
     password=POSTGRES_PASSWORD
 )
+create_table(conn)
 
 @app.route('/api/reservations', methods=['GET'])
 def reservations():
@@ -57,16 +75,6 @@ def reserve():
 
     cur = conn.cursor()
     
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS reservations (
-            reservation_id SERIAL PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            table_id INT NOT NULL,
-            date DATE NOT NULL,
-            start_time TIME NOT NULL,
-            end_time TIME NOT NULL
-        )
-    """)
     
     cur.execute("""
         INSERT INTO reservations (name, table_id, date, start_time, end_time)
@@ -84,6 +92,7 @@ def check_conflict():
     date = data.get('date')
     start_time = data.get('start_time')
     end_time = data.get('end_time')
+    
     
     cur = conn.cursor()
     cur.execute("""
@@ -111,4 +120,4 @@ def check_conflict():
     
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, port=5000)

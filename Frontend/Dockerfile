@@ -10,11 +10,11 @@ COPY . /frontend
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir Flask requests
 
-# Expose port 5000 to the outside world
-EXPOSE 5000
+# Expose port 8000 to the outside world
+EXPOSE 8000
 
 # Define environment variable for the backend API URL
-ENV BACKEND_API_URL=http://flaskappback:8000/api
+ENV BACKEND_API_URL=http://localhost:5000/api
 
 # Command to run the Flask application
-CMD ["python", "frontapp.py"]
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=8000"]

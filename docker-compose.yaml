@@ -1,8 +1,12 @@
 version: '3'
 
 services:
-  flaskappback:
+  backend:
+    image: flaskappback
     build: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: "5432"
@@ -12,27 +16,34 @@ services:
     networks:
       - my-network
 
-  flaskappfront:
+  frontend:
+    image: flaskappfront
     build: ./frontend
     ports:
-      - "8080:80"
+      - "8000:8000"
     environment:
-      BACKEND_URL: http://flaskappback:5000
+      BACKEND_API_URL: "http://backend:5000/api"
     networks:
       - my-network
 
   postgres:
-      image: postgres:latest
-      environment:
-        POSTGRES_DB: postgres
-        POSTGRES_USER: username
-        POSTGRES_PASSWORD: password
-        POSTGRES_PORT: 5432
-      ports:
-        - "6000:5432"
-      networks:
-        - my-network
+    image: postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U username"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - my-network
 
 networks:
   my-network:
     driver: bridge
+
+volumes:
+  postgres-data:
